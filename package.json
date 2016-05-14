@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/csbok/hogu#readme",
   "dependencies": {
-    "express": "^4.13.4"
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "mysql": "^2.10.2",
+    "sequelize": "^3.23.1"
   }
 }
