@@ -11,7 +11,6 @@ var sequelize = new Sequelize('deadsea', 'deadsea', 'kpuce740', {
   },
 });
 
-// 모델이 수정되면 DB에서 직접 삭제해주세요.
 var User = sequelize.define('user', {
   loginId: { type: Sequelize.STRING },
   password:{ type: Sequelize.STRING }
@@ -26,14 +25,32 @@ var Review = sequelize.define('review', {
   comment: { type: Sequelize.STRING }
 });
 
-User.hasMany(Review, {as: 'Review'});
-Food.hasMany(Review, {as: 'Review'});
+User.hasMany(Review);
+Review.belongsTo(User);
+Food.hasMany(Review);
+Review.belongsTo(Food);
 
-User.sync({force:false}).then(function() {
-  Food.sync({force:false}).then(function() {
-    Review.sync({force:false});
+var createTable = function() {
+  User.sync({force:false}).then(function() {
+    Food.sync({force:false}).then(function() {
+      Review.sync({force:false});
+    });
   });
-});
+}
+
+// 모델이 수정되면 drop = true로 변경해주세요.
+var drop = false;
+if (drop) {
+  Review.drop().then(function() {
+    Food.drop().then(function() {
+      User.drop().then(function() {
+        createTable();
+      })
+    })
+  })
+} else {
+  createTable();
+}
 
 var db = {};
 db.User = User;
