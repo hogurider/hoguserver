@@ -4,9 +4,9 @@ var bodyParser = require('body-parser');
 
 var db = require('./models');
 
-//app.use(express.static('doc'));
+app.use(express.static('apidoc'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 var router = require('./routes')(app, db);
 

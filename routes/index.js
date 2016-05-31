@@ -26,6 +26,19 @@ module.exports = function(app, db)
   //});
 
   /**
+   * @api {get} /foods/:id 사료 정보들 갖고오기
+   * @apiName Select Food List
+   * @apiGroup Food
+   *
+   * @apiSuccess {Object} object 사료 데이터
+   *
+   * @apiSampleRequest http://localhost:5000/foods
+   */
+  app.get('/foods', function(req, res) {
+    foodController.getList(req, res, db);
+  });
+
+  /**
    * @api {get} /foods/:id 특정 사료 정보 갖고오기
    * @apiName Select Food
    * @apiGroup Food
@@ -36,8 +49,9 @@ module.exports = function(app, db)
    * @apiSampleRequest http://localhost:5000/foods/:id
    */
   app.get('/foods/:id', function(req, res) {
-    foodController.select(req, res, db);
+    foodController.get(req, res, db);
   });
+
 
   /**
    * @api {post} /foods 새로운 사료 정보 입력 (관리자에서 쓰인다)
@@ -52,7 +66,7 @@ module.exports = function(app, db)
    * @apiSampleRequest http://localhost:5000/foods/
    */
   app.post('/foods', function(req, res) {
-    foodController.insert(req, res, db);
+    foodController.post(req, res, db);
   });
 
   // 리뷰 작성

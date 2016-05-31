@@ -11,29 +11,52 @@ var sequelize = new Sequelize('deadsea', 'deadsea', 'kpuce740', {
   },
 });
 
-// 모델이 수정되면 DB에서 직접 삭제해주세요.
-var User = sequelize.define('user', {
-  loginId: { type: Sequelize.STRING },
-  password:{ type: Sequelize.STRING }
-});
+var User = require('./user')(sequelize);
+var Food = require('./food')(sequelize);
+var ReviewImage = require('./review-image')(sequelize);
+var Review = require('./review')(sequelize);
+var Wishlist = require('./wishlist')(sequelize);
 
-var Food = sequelize.define('food', {
-  name:  { type: Sequelize.STRING },
-  maker: { type: Sequelize.STRING }
-});
+// 테이블간의 관계 정의
+User.hasMany(Review);
+Review.belongsTo(User);
+Food.hasMany(Review);
+Review.belongsTo(Food);
+Review.hasMany(ReviewImage);
+ReviewImage.belongsTo(Review);
+Wishlist.hasMany(Food);
+Food.belongsTo(Wishlist);
 
-var Review = sequelize.define('review', {
-  comment: { type: Sequelize.STRING }
-});
-
-User.hasMany(Review, {as: 'Review'});
-Food.hasMany(Review, {as: 'Review'});
-
-User.sync({force:false}).then(function() {
-  Food.sync({force:false}).then(function() {
-    Review.sync({force:false});
+// 테이블 생성 함수. 테이블이 추가 되면 여기에 추가해줘야한다.
+var createTable = function() {
+  User.sync({force:false}).then(function() {
+    Wishlist.sync({force:false}).then(function() {
+      Food.sync({force:false}).then(function() {
+        Review.sync({force:false}).then(function() {
+          ReviewImage.sync({force:false});
+        });
+      });
+    });
   });
-});
+}
+
+// 모델이 수정되면 drop = true로 변경해주세요.
+var drop = true;
+if (drop) {
+  ReviewImage.drop().then(function() {
+    Review.drop().then(function() {
+      Food.drop().then(function() {
+        Wishlist.drop().then(function() {
+          User.drop().then(function() {
+            createTable();
+          });
+        });
+      });
+    });
+  });
+} else {
+  createTable();
+}
 
 var db = {};
 db.User = User;
